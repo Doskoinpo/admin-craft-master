@@ -21,29 +21,24 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Edit, Trash, UserPlus } from "lucide-react";
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-}
-
-const mockUsers: User[] = [
+const mockUsers = [
   { id: 1, name: "John Doe", email: "john@example.com", role: "Admin" },
   { id: 2, name: "Jane Smith", email: "jane@example.com", role: "User" },
   { id: 3, name: "Bob Wilson", email: "bob@example.com", role: "User" },
 ];
 
 export default function Users() {
-  const [users, setUsers] = useState<User[]>(mockUsers);
+  const [users, setUsers] = useState(mockUsers);
   const [isOpen, setIsOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [editingUser, setEditingUser] = useState(null);
   const { toast } = useToast();
 
-  const handleSave = (formData: FormData) => {
-    const name = formData.get("name") as string;
-    const email = formData.get("email") as string;
-    const role = formData.get("role") as string;
+  const handleSave = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const name = formData.get("name");
+    const email = formData.get("email");
+    const role = formData.get("role");
 
     if (editingUser) {
       setUsers(
@@ -65,7 +60,7 @@ export default function Users() {
     });
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id) => {
     setUsers(users.filter((user) => user.id !== id));
     toast({
       title: "User Deleted",
@@ -95,7 +90,7 @@ export default function Users() {
               </DialogTitle>
             </DialogHeader>
             <form
-              action={handleSave}
+              onSubmit={handleSave}
               className="space-y-4"
             >
               <div className="space-y-2">
@@ -134,7 +129,7 @@ export default function Users() {
         </Dialog>
       </div>
 
-      <div className="border rounded-lg bg-white">
+      <div className="border rounded-lg bg-card text-card-foreground">
         <Table>
           <TableHeader>
             <TableRow>
